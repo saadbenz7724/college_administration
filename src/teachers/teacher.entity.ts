@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Class } from "src/classes/class.entity";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('teachers')
 export class Teacher{
@@ -10,4 +11,12 @@ export class Teacher{
 
     @Column({unique: true})
     email: string;
+
+    @ManyToMany(()=>Class, (cls)=>cls.teachers)
+    @JoinTable({
+        name: 'teacher_classes',
+        joinColumn: {name: 'teacherId', referencedColumnName: 'id'},
+        inverseJoinColumn: {name: 'classId', referencedColumnName: 'id'}
+    })
+    classes: Class[]
 }
