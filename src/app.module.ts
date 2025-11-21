@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentsModule } from './students/students.module';
 import { ClassesModule } from './classes/classes.module';
+import { TeachersModule } from './teachers/teachers.module';
 
 
 @Module({
@@ -20,6 +21,7 @@ import { ClassesModule } from './classes/classes.module';
     }),
     StudentsModule,
     ClassesModule,
+    TeachersModule,
   ],
   
 })
