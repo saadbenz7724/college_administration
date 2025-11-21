@@ -1,4 +1,5 @@
 import { Student } from "src/students/student.entity";
+import { Course } from "src/subjects/subject.entity";
 import { Teacher } from "src/teachers/teacher.entity";
 import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -18,5 +19,8 @@ export class Class{
 
     @ManyToMany(()=> Teacher, (teacher)=>teacher.classes)
     teachers: Teacher[];
+
+    @OneToMany(()=> Course, (course)=> course.classes)
+    subjects: Course[];
 
 }
