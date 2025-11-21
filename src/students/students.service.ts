@@ -26,14 +26,14 @@ export class StudentsService {
     }
 
     async update(id: number, body: any){
-        const student = await this.studentRepo.findOneBy({id})
+        const student = await this.studentRepo.findOne({where:{id}})
         if(!student) throw new NotFoundException(`Student with ID ${id} not found`);
         await this.studentRepo.update(id, body)
         return {message: 'student updated successfully'}
     }
 
     async remove(id: number){
-        const student = await this.studentRepo.findOneBy({id})
+        const student = await this.studentRepo.findOne({where: {id}})
         if(!student) throw new NotFoundException(`Student with ID ${id} not found`);
         await this.studentRepo.delete(id)
         return {message: 'Student deleted successfully'}
