@@ -1,3 +1,4 @@
+import { Class } from "src/classes/class.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('students')
@@ -16,4 +17,12 @@ export class Student{
 
     @Column()
     age: number;
+
+    @ManyToOne(()=> Class, (cls)=>cls.students, {onDelete: 'SET NULL'})
+    @JoinColumn({name: 'classId'})
+    classEntity: Class;
+
+    @Column({nullable: true})
+    classId: number;
+
 }
