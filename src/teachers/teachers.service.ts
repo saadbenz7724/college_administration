@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Teacher } from './teacher.entity';
+import { CreateTeacherDto } from './dto/createTeacherDto';
+import { UpdateTeacherDto } from './dto/updateTeacherDto';
 
 @Injectable()
 export class TeachersService {
@@ -20,15 +22,15 @@ export class TeachersService {
         return teacher;
     }
 
-    async create(body: any){
-        const teacher = await this.teacherRepo.create(body);
+    async create(createTeacherDto: CreateTeacherDto){
+        const teacher = await this.teacherRepo.create(createTeacherDto);
         return this.teacherRepo.save(teacher);
     }
 
-    async update(id: number, body: any){
+    async update(id: number, updateTeacherDto: UpdateTeacherDto){
         const teacher = await this.teacherRepo.findOne({where: {id}})
         if(!teacher) throw new NotFoundException(`Teacher with ID ${id} not found`);
-        await this.teacherRepo.update(id, body)
+        await this.teacherRepo.update(id, updateTeacherDto)
         return {message: 'Teacher updated successfully'}
     }
 
