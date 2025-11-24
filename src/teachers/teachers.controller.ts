@@ -12,6 +12,14 @@ export class TeachersController {
         return this.teacherService.findAll();
     }
 
+    @Post(':teacherId/classes/:classId')
+    assginClassToTeacher(
+        @Param('teacherId') teacherId: number,
+        @Param('classId') classId: number,
+    ){
+        return this.teacherService.assignClassToTeacher(teacherId, classId);
+    }
+
     @Get(':id')
     getOneById(@Param('id')id: number){
         return this.teacherService.findOne(id);

@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { Teacher } from './teacher.entity';
 import { CreateTeacherDto } from './dto/createTeacherDto';
 import { UpdateTeacherDto } from './dto/updateTeacherDto';
+import { Class } from 'src/classes/class.entity';
 
 @Injectable()
 export class TeachersService {
     constructor(
         @InjectRepository(Teacher)
         private teacherRepo: Repository<Teacher>,
+        @InjectRepository(Class)
+        private classRepo: Repository<Class>,
     ){}
 
     async findAll(){
@@ -39,5 +42,32 @@ export class TeachersService {
         if(!teacher) throw new NotFoundException(`Teacher with ID ${id} not found`);
         await this.teacherRepo.delete(id);
         return { message: 'Teacher deleted successfully' };
+    }
+
+    async assignClassToTeacher(teacherId: number, classId: number){
+        const teacher = await this.teacherRepo.findOne({
+            where: {id: teacherId},
+            relations: ['classes'],
+        });
+        if(!teacher) throw new NotFoundException(`teacher with ID ${teacherId} not found`);
+        const cls = await this.classRepo.findOne({
+            where: {id: classId}
+        });
+        if(!cls) throw new NotFoundException(`Class with ID ${classId} not found`);
+        const alreadyAssigned = teacher.classes.some(c => c.id === classId)
+        if(alreadyAssigned){
+            return {
+                message: 'Class already assign to this teacher',
+                teacherId,
+                classId,
+            };
+        }
+        teacher.classes.push(cls);
+        await this.teacherRepo.save(teacher);
+        return{
+            message: 'Class assigned successfully',
+            teacherId,
+            classId,
+        };
     }
 }
