@@ -26,6 +26,14 @@ export class StudentsController {
         return this.studentService.create(createStudentDto)
     }
 
+    @Patch(':studentId/class/:classId')
+    assignClassToStudent(
+        @Param('studentId')studentId: number,
+        @Param('classId')classId: number,
+    ){
+        return this.studentService.assignClassToStudents(studentId, classId)
+    }
+
     @Patch(':id')
     update(@Param('id')id: number, @Body() updateStudentDto: UpdateStudentDto){
         return this.studentService.update(id, updateStudentDto)

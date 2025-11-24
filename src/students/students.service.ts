@@ -4,12 +4,15 @@ import { Student } from './student.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateStudentDto } from './dto/createStudentDto';
 import { UpdateStudentDto } from './dto/updateStudentDto';
+import { Class } from 'src/classes/class.entity';
 
 @Injectable()
 export class StudentsService {
     constructor(
         @InjectRepository(Student)
         private studentRepo: Repository<Student>,
+        @InjectRepository(Class)
+        private classRepo: Repository<Class>,
     ){}
 
     async findAll(){
@@ -47,5 +50,18 @@ export class StudentsService {
             relations: ['classEntity'],
         });
         return student.map(({classId, ...rest})=>rest)
+    }
+
+    async assignClassToStudents(studentId: number, classId: number){
+        const student = await this.studentRepo.findOne({
+            where: {id: studentId}
+        });
+        if(!student) throw new NotFoundException(`Student with ID ${studentId} not found`);
+        const cls = await this.classRepo.findOne({where: {id: classId}})
+        if(!cls) throw new NotFoundException(`Class with ID ${classId} not found`);
+        student.classEntity=cls;
+        student.classId=classId;
+
+        return await this.studentRepo.save(student);
     }
 }
