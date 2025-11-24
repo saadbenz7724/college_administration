@@ -70,4 +70,13 @@ export class TeachersService {
             classId,
         };
     }
+
+    async getClassesOfTeacher(teacherId: number){
+        const teacher = await this.teacherRepo.findOne({
+            where: {id: teacherId},
+            relations: ['classes']
+        });
+        if(!teacher) throw new NotFoundException(`Teacher with ID ${teacherId} not found`);
+        return teacher.classes;
+    }
 }
