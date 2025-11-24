@@ -45,11 +45,32 @@ export class StudentsService {
 
     }
 
-    async getStudentsWithClass(){
-        const student = await this.studentRepo.find({
+    async getStudentsWithClass(page: number, limit: number){
+        const [student, total] = await this.studentRepo.findAndCount({
             relations: ['classEntity'],
+            skip: (page - 1)*limit,
+            take: limit,
+            order: {id: 'ASC'},
         });
-        return student.map(({classId, ...rest})=>rest)
+        const result = student.map(student=>({
+            id: student.id,
+            rollNumber: student.rollNumber,
+            name: student.name,
+            email: student.email,
+            age: student.age,
+            class: student.classEntity?{
+                id: student.classEntity.id,
+                className: student.classEntity.className,
+                roomNumber: student.classEntity.roomNumber,
+            }: null,
+        }));
+        return {
+            page,
+            limit,
+            total,
+            totalPage: Math.ceil(total/limit),
+            data: result,
+        };
     }
 
     async assignClassToStudents(studentId: number, classId: number){

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/createStudentDto';
 import { UpdateStudentDto } from './dto/updateStudentDto';
@@ -17,8 +17,13 @@ export class StudentsController {
     }
 
     @Get('with-class')
-    getStudentsWithClass(){
-        return this.studentService.getStudentsWithClass();
+    getStudentsWithClass(
+        @Query('page') page = 1,
+        @Query('limit') limit = 10,
+    ){
+        const pageNumber = Number(page);
+        const pageLimit = Number(limit);
+        return this.studentService.getStudentsWithClass(pageNumber, pageLimit);
     }
 
     @Get(':id')
