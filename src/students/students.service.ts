@@ -64,4 +64,25 @@ export class StudentsService {
 
         return await this.studentRepo.save(student);
     }
+
+    async getStudentClass(id: number){
+        const student = await this.studentRepo.findOne({
+            where: {id},
+            relations: ['classEntity'],
+        });
+        if(!student) throw new NotFoundException(`Student with ID ${id} not found`);
+        return {
+            id: student.id,
+            rollNumber: student.rollNumber,
+            name: student.name,
+            email: student.email,
+            age: student.age,
+            class: student.classEntity?{
+                id: student.classEntity.id,
+                className: student.classEntity.className,
+                roomNumber: student.classEntity.roomNumber,
+            }: null,
+
+        };
+    }
 }
