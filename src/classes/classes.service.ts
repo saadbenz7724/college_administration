@@ -40,4 +40,20 @@ export class ClassesService {
         await this.classRepo.delete(id)
         return {message: 'Class deleted successfully'}
     }
+    async getClassWithStudents(id: number){
+        const cls = await this.classRepo.findOne({
+            where: {id},
+            relations: ['students'],
+        });
+        if(!cls) throw new NotFoundException(`Class with ID ${id} not found`);
+        return{
+            id: cls.id,
+            className: cls.className,
+            roomNumber: cls.roomNumber,
+            students: cls.students.map(student=>{
+                const {classId, ...result} = student
+                return result;
+            }),
+        };
+    }
 }
