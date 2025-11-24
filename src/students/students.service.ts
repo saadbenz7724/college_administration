@@ -41,4 +41,11 @@ export class StudentsService {
         return {message: 'Student deleted successfully'}
 
     }
+
+    async getStudentsWithClass(){
+        const student = await this.studentRepo.find({
+            relations: ['classEntity'],
+        });
+        return student.map(({classId, ...rest})=>rest)
+    }
 }

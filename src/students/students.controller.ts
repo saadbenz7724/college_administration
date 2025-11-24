@@ -11,6 +11,11 @@ export class StudentsController {
         return this.studentService.findAll()
     }
 
+    @Get('with-class')
+    getStudentsWithClass(){
+        return this.studentService.getStudentsWithClass();
+    }
+
     @Get(':id')
     getOne(@Param('id')id: number){
         return this.studentService.findOne(id)
