@@ -39,4 +39,11 @@ export class SubjectsService {
         await this.subjectRepo.delete(id)
         return {message: 'subject deleted successfully'};
     }
+
+    async findByClass(classId: number){
+        return this.subjectRepo.find({
+            where: {classes: {id: classId}},
+            relations: ['teacher', 'classes'],
+        });
+    }
 }

@@ -17,6 +17,12 @@ export class SubjectsController {
     getAll(){
         return this.subjectService.findAll();
     }
+
+    @Get('class/:classId')
+    getSubjectsByClass(@Param('classId')classId: number){
+        return this.subjectService.findByClass(classId);
+    }
+
     @Get(':id')
     getOne(@Param('id')id: number){
         return this.subjectService.findOne(id)
