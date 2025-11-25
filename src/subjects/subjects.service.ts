@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './subject.entity';
 import { Repository } from 'typeorm';
 import { CreateSubjectDto } from './dto/createSubjectDto';
+import { Teacher } from 'src/teachers/teacher.entity';
 
 @Injectable()
 export class SubjectsService {
     constructor(
         @InjectRepository(Course)
         private subjectRepo: Repository<Course>,
+        @InjectRepository(Teacher)
+        private teacherRepo: Repository<Teacher>,
     ){}
 
     async create(createSubjectDto: CreateSubjectDto){
@@ -67,5 +70,18 @@ export class SubjectsService {
                 classes: s.classes,
             })),
         };
+    }
+
+    async assignTeacher(subjectId: number, teacherId: number){
+        const subject = await this.subjectRepo.findOne({
+            where: {id: subjectId},
+        });
+        if(!subject) throw new NotFoundException(`Subject with ID ${subjectId} not found`);
+        const teacher = await this.teacherRepo.findOne({
+            where: {id: teacherId}
+        });
+        if(!teacher) throw new NotFoundException(`Teacher with ID ${teacherId} not found`);
+        subject.teacher = teacher;
+        return this.subjectRepo.save(subject);
     }
 }

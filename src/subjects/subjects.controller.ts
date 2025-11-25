@@ -33,6 +33,14 @@ export class SubjectsController {
         return this.subjectService.findOne(id)
     }
 
+    @Patch(':subjectId/teacher/:teacherId')
+    assignTeacherToSubject(
+        @Param('subjectId') subjectId: number,
+        @Param('teacherId') teacherId: number,
+    ){
+        return this.subjectService.assignTeacher(subjectId, teacherId);
+    }
+
     @Patch(':id')
     update(@Param('id')id: number, @Body() createSubjectDto: CreateSubjectDto){
         return this.subjectService.update(id, createSubjectDto);
