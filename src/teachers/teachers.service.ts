@@ -88,4 +88,18 @@ export class TeachersService {
         if(!teacher) throw new NotFoundException(`Teacher with ID ${id} not found`);
         return teacher;
     }
+
+    async getTeacherSummary(){
+        const teacher = await this.teacherRepo.find({
+            relations: ['classes', 'subjects']
+        });
+
+        return teacher.map(t => ({
+            id: t.id,
+            name: t.name,
+            email: t.email,
+            totalClasses: t.classes?.length || 0,
+            totalSubjects: t.subjects?.length || 0
+        }));
+    }
 }
