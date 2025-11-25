@@ -46,10 +46,12 @@ export class ClassesService {
             relations: ['students'],
         });
         if(!cls) throw new NotFoundException(`Class with ID ${id} not found`);
+        const totalStudents = cls.students.length;
         return{
             id: cls.id,
             className: cls.className,
             roomNumber: cls.roomNumber,
+            totalStudents,
             students: cls.students.map(student=>{
                 const {classId, ...result} = student
                 return result;
