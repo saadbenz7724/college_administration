@@ -117,4 +117,18 @@ export class StudentsService {
         });
         return data;
     }
+
+    async getStudentSubjects(id: number){
+        const student = await this.studentRepo.findOne({
+            where: {id},
+            relations: ['classEntity', 'classEntity.subjects']
+        });
+        if(!student) throw new NotFoundException(`Student with ID ${id} not found`);
+        return{
+            studentId: student.id,
+            studentName: student.name,
+            className: student.classEntity.className,
+            subjects: student.classEntity.subjects,
+        }
+    }
 }
