@@ -131,4 +131,12 @@ export class StudentsService {
             subjects: student.classEntity.subjects,
         }
     }
+
+    async studentGroupByClass(){
+        const student = await this.studentRepo.createQueryBuilder('students').leftJoinAndSelect('students.classEntity', 'class')
+                        .select('class.id','classId').addSelect('class.className', 'className')
+                        .addSelect('count(students.id)', 'totalStudents').groupBy('class.id').getRawMany();
+
+        return student;                                      
+    }
 }

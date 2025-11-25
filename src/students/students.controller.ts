@@ -11,6 +11,11 @@ export class StudentsController {
         return this.studentService.findAll()
     }
 
+    @Get('group-by-class')
+    studentGroupByClass(){
+        return this.studentService.studentGroupByClass();
+    }
+
     @Get(':id/subjects')
     getStudentSubjects(@Param('id')id: number){
         return this.studentService.getStudentSubjects(id);
