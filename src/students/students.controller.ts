@@ -11,6 +11,13 @@ export class StudentsController {
         return this.studentService.findAll()
     }
 
+    @Get('search')
+    searchStudent(
+        @Query('query')query: string
+    ){
+        return this.studentService.searchStudents(query)
+    }
+
     @Get(':id/class')
     getStudentClass(@Param('id')id: number){
         return this.studentService.getStudentClass(id);

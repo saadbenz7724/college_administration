@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Student } from './student.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateStudentDto } from './dto/createStudentDto';
@@ -105,5 +105,16 @@ export class StudentsService {
             }: null,
 
         };
+    }
+
+    async searchStudents(query: string){
+        const data = await this.studentRepo.find({
+            where: [
+                {name: Like(`%${query}%`)},
+                {email: Like(`%${query}%`)},
+                {rollNumber: Number(query)}
+            ],
+        });
+        return data;
     }
 }
