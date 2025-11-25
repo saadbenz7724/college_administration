@@ -46,4 +46,26 @@ export class SubjectsService {
             relations: ['teacher', 'classes'],
         });
     }
+
+    async findByTeacher(teacherId: number){
+        const subjects = await this.subjectRepo.find({
+            where: {teacher: {id: teacherId}},
+            relations: ['classes', 'teacher'],
+        });
+        if(!subjects.length) return null;
+        const teacher = subjects[0].teacher;
+
+        return {
+            teacher: {
+                id: teacher.id,
+                name: teacher.name,
+                email: teacher.email,
+            },
+            subjects: subjects.map(s=> ({
+                id: s.id,
+                subjectName: s.subjectName,
+                classes: s.classes,
+            })),
+        };
+    }
 }

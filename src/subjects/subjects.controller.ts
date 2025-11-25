@@ -18,6 +18,11 @@ export class SubjectsController {
         return this.subjectService.findAll();
     }
 
+    @Get('teacher/:teacherId')
+    getSubjectsByTeacher(@Param('teacherId')teacherId: number){
+        return this.subjectService.findByTeacher(teacherId);
+    }
+
     @Get('class/:classId')
     getSubjectsByClass(@Param('classId')classId: number){
         return this.subjectService.findByClass(classId);
