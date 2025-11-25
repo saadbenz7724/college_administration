@@ -38,15 +38,7 @@ async function seed(){
         }
         console.log('classes added')
 
-        const subjects: Course[] = [];
-        for (let i = 1; i <= 20; i++) {
-            const sub = subjectRepo.create({
-                subjectName: `Subject ${i}`,
-            });
-            subjects.push(await subjectRepo.save(sub));
-        }
-        console.log('subjects added');
-
+        
         const teachers: Teacher[] = [];
         for (let i = 1; i <= 20; i++) {
             const teacher = teacherRepo.create({
@@ -57,6 +49,22 @@ async function seed(){
             teachers.push(await teacherRepo.save(teacher));
         }
         console.log('teachers added');
+
+        const cls = await classRepo.find();
+        const tea = await teacherRepo.find();
+
+        const subjects: Course[] = [];
+        for (let i = 1; i <= 20; i++) {
+             const randomClass = cls[Math.floor(Math.random() * cls.length)];
+            const randomTeacher = tea[Math.floor(Math.random() * tea.length)];
+            const sub = subjectRepo.create({
+                subjectName: `Subject ${i}`,
+                classes: randomClass,
+                teacher: randomTeacher,
+            });
+            subjects.push(await subjectRepo.save(sub));
+        }
+        console.log('subjects added');
 
         const students: Student[] = []
         for(let i = 1; i <= 200; i++){
