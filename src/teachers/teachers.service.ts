@@ -79,4 +79,13 @@ export class TeachersService {
         if(!teacher) throw new NotFoundException(`Teacher with ID ${teacherId} not found`);
         return teacher.classes;
     }
+
+    async getTeacherDetails(id: number){
+        const teacher = await this.teacherRepo.findOne({
+            where: {id},
+            relations: ['classes', 'subjects'],
+        });
+        if(!teacher) throw new NotFoundException(`Teacher with ID ${id} not found`);
+        return teacher;
+    }
 }
