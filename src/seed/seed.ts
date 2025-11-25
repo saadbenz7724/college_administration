@@ -29,7 +29,7 @@ async function seed(){
         const subjectRepo = AppDataSource.getRepository(Course);
 
         const classes: Class[] = [];
-        for (let i = 1; i <= 20; i++) {
+        for (let i = 1; i <= 10; i++) {
             const cls = classRepo.create({
                 className: `Class ${i}`,
                 roomNumber: `Room ${100 + i}`,
