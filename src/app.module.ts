@@ -6,6 +6,7 @@ import { ClassesModule } from './classes/classes.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { SubjectsModule } from './subjects/subjects.module';
 import { AttendanceModule } from './attendance/attendance.module';
+import { RedisModule } from './redis/redis.module';
 
 
 @Module({
@@ -26,6 +27,7 @@ import { AttendanceModule } from './attendance/attendance.module';
     TeachersModule,
     SubjectsModule,
     AttendanceModule,
+    RedisModule,
   ],
   
 })
