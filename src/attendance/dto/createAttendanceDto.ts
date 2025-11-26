@@ -1,13 +1,18 @@
-import { IsDate, IsNotEmpty } from "class-validator";
+import { IsBoolean, IsDateString, IsNotEmpty, IsNumber } from "class-validator";
 
 export class CreateAttendanceDto{
-    @IsDate()
+    @IsNotEmpty()
+    @IsDateString()
     date: string;
 
-    @IsNotEmpty()
+    @IsBoolean()
     present: boolean;
 
+    @IsNumber()
+    @IsNotEmpty()
     studentId: number;
 
+    @IsNumber()
+    @IsNotEmpty()
     classId: number;
 }

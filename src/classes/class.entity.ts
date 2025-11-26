@@ -24,7 +24,7 @@ export class Class{
     @OneToMany(()=> Course, (course)=> course.classes)
     subjects: Course[];
 
-    @OneToMany(()=> Attendance, attendance=> attendance.class)
+    @OneToMany(()=> Attendance, attendance=> attendance.classEntity)
     attendance: Attendance[];
 
 }

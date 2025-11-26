@@ -11,18 +11,19 @@ export class AttendanceService {
         private attenRepo: Repository<Attendance>
     ){}
     async create(dto: CreateAttendanceDto){
-        const atten = await this.attenRepo.create({
+        
+        const atten = this.attenRepo.create({
             present: dto.present,
-            date: dto.date,
+            date: new Date(dto.date),
             student: {id: dto.studentId},
-            class: {id: dto.classId},
+            classEntity: {id: dto.classId},
         });
-        return this.attenRepo.save(atten);
+        return await this.attenRepo.save(atten);
     }
 
     async getClassAttendance(classId: number){
         return this.attenRepo.find({
-            where: {class:{id: classId}},
+            where: {classEntity:{id: classId}},
             relations: ['student'],
         });
     }
