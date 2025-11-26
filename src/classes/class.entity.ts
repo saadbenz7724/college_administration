@@ -1,3 +1,4 @@
+import { Attendance } from "src/attendance/attendance.entity";
 import { Student } from "src/students/student.entity";
 import { Course } from "src/subjects/subject.entity";
 import { Teacher } from "src/teachers/teacher.entity";
@@ -22,5 +23,8 @@ export class Class{
 
     @OneToMany(()=> Course, (course)=> course.classes)
     subjects: Course[];
+
+    @OneToMany(()=> Attendance, attendance=> attendance.class)
+    attendance: Attendance[];
 
 }

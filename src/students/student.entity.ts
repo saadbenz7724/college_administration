@@ -1,5 +1,6 @@
+import { Attendance } from "src/attendance/attendance.entity";
 import { Class } from "src/classes/class.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('students')
 export class Student{
@@ -24,5 +25,8 @@ export class Student{
 
     @Column({nullable: true})
     classId: number;
+
+    @OneToMany(()=> Attendance, attendance=> attendance.student)
+    attendance: Attendance[];
 
 }

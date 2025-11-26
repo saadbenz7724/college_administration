@@ -5,6 +5,7 @@ import { StudentsModule } from './students/students.module';
 import { ClassesModule } from './classes/classes.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { SubjectsModule } from './subjects/subjects.module';
+import { AttendanceModule } from './attendance/attendance.module';
 
 
 @Module({
@@ -24,6 +25,7 @@ import { SubjectsModule } from './subjects/subjects.module';
     ClassesModule,
     TeachersModule,
     SubjectsModule,
+    AttendanceModule,
   ],
   
 })
