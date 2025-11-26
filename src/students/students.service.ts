@@ -142,9 +142,16 @@ export class StudentsService {
     }
 
     async studentGroupByClass(){
+        const cacheKey = 'student-group-classes';
+        const cache = await this.redisClient.get(cacheKey);
+        if(cache){
+            return JSON.parse(cache)
+        }
         const student = await this.studentRepo.createQueryBuilder('students').leftJoinAndSelect('students.classEntity', 'class')
                         .select('class.id','classId').addSelect('class.className', 'className')
                         .addSelect('count(students.id)', 'totalStudents').groupBy('class.id').getRawMany();
+
+        await this.redisClient.set(cacheKey, JSON.stringify(student), 'EX', 100)             
 
         return student;                                      
     }
