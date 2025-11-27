@@ -30,7 +30,8 @@ export class ClassesService {
     }
 
     async create(createClassDto: CreateClassDto){
-        const cls = this.classRepo.create(createClassDto);
+        const cls = await this.classRepo.create(createClassDto);
+        await this.redisClient.del('all-classes');
         return this.classRepo.save(cls);
     }
 
@@ -38,6 +39,7 @@ export class ClassesService {
         const cls = await this.classRepo.findOne({where: {id}})
         if(!cls) throw new NotFoundException(`Class with ID ${id} not found`);
         await this.classRepo.update(id, updateClassDto)
+        await this.redisClient.del('all-classes');
         return {message: 'Class updated successfully'}
     }
 
@@ -45,6 +47,7 @@ export class ClassesService {
         const cls = await this.classRepo.findOne({where: {id}})
         if(!cls) throw new NotFoundException(`Class with ID ${id} not found`);
         await this.classRepo.delete(id)
+        await this.redisClient.del('all-classes');
         return {message: 'Class deleted successfully'}
     }
     async getClassWithStudents(id: number){
