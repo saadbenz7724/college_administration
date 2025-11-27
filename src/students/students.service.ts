@@ -36,6 +36,7 @@ export class StudentsService {
 
     async create(createStudentDto: CreateStudentDto){
         const student = await this.studentRepo.create(createStudentDto)
+        await this.redisClient.del('all-students');
         return this.studentRepo.save(student);
     }
 
@@ -43,6 +44,7 @@ export class StudentsService {
         const student = await this.studentRepo.findOne({where:{id}})
         if(!student) throw new NotFoundException(`Student with ID ${id} not found`);
         await this.studentRepo.update(id, updateStudentDto)
+        await this.redisClient.del('all-students');
         return {message: 'student updated successfully'}
     }
 
@@ -50,6 +52,7 @@ export class StudentsService {
         const student = await this.studentRepo.findOne({where: {id}})
         if(!student) throw new NotFoundException(`Student with ID ${id} not found`);
         await this.studentRepo.delete(id)
+        await this.redisClient.del('all-students');
         return {message: 'Student deleted successfully'}
 
     }

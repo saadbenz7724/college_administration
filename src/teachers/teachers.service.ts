@@ -36,6 +36,7 @@ export class TeachersService {
 
     async create(createTeacherDto: CreateTeacherDto){
         const teacher = await this.teacherRepo.create(createTeacherDto);
+        await this.redisClient.del('all-teachers');
         return this.teacherRepo.save(teacher);
     }
 
@@ -43,6 +44,7 @@ export class TeachersService {
         const teacher = await this.teacherRepo.findOne({where: {id}})
         if(!teacher) throw new NotFoundException(`Teacher with ID ${id} not found`);
         await this.teacherRepo.update(id, updateTeacherDto)
+        await this.redisClient.del('all-teachers')
         return {message: 'Teacher updated successfully'}
     }
 
@@ -50,6 +52,7 @@ export class TeachersService {
         const teacher = await this.teacherRepo.findOne({where: {id}})
         if(!teacher) throw new NotFoundException(`Teacher with ID ${id} not found`);
         await this.teacherRepo.delete(id);
+        await this.redisClient.del('all-teachers');
         return { message: 'Teacher deleted successfully' };
     }
 

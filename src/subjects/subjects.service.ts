@@ -18,6 +18,7 @@ export class SubjectsService {
 
     async create(createSubjectDto: CreateSubjectDto){
         const sub = await this.subjectRepo.create(createSubjectDto)
+        await this.redisClient.del('all-subjects');
         return this.subjectRepo.save(sub);
     }
 
@@ -40,6 +41,7 @@ export class SubjectsService {
         const sub = await this.subjectRepo.findOne({where:{id}})
         if(!sub) throw new NotFoundException(`Subject with ID ${id} not found`);
         await this.subjectRepo.update(id, createSubjectDto);
+        await this.redisClient.del('all-subjects');
         return {message: 'subject updated successfully'};
     }
 
@@ -47,6 +49,7 @@ export class SubjectsService {
         const sub = await this.subjectRepo.findOne({where: {id}})
         if(!sub) throw new NotFoundException(`Subject with ID ${id} not found`);
         await this.subjectRepo.delete(id)
+        await this.redisClient.del('all-subjects');
         return {message: 'subject deleted successfully'};
     }
 
