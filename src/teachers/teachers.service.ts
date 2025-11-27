@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Teacher } from './teacher.entity';
 import { CreateTeacherDto } from './dto/createTeacherDto';
 import { UpdateTeacherDto } from './dto/updateTeacherDto';
 import { Class } from 'src/classes/class.entity';
+import Redis from 'ioredis';
 
 @Injectable()
 export class TeachersService {
@@ -13,10 +14,18 @@ export class TeachersService {
         private teacherRepo: Repository<Teacher>,
         @InjectRepository(Class)
         private classRepo: Repository<Class>,
+        @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
     ){}
 
     async findAll(){
-        return this.teacherRepo.find()
+        const cacheKey = 'all-teachers';
+        const cache = await this.redisClient.get(cacheKey);
+        if(cache){
+            return JSON.parse(cache);
+        }
+        const teacher = await this.teacherRepo.find()
+        await this.redisClient.set(cacheKey, JSON.stringify(teacher), 'EX', 100)
+        return teacher;
     }
 
     async findOne(id: number){

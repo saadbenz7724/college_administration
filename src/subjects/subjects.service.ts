@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './subject.entity';
 import { Repository } from 'typeorm';
 import { CreateSubjectDto } from './dto/createSubjectDto';
 import { Teacher } from 'src/teachers/teacher.entity';
+import Redis from 'ioredis';
 
 @Injectable()
 export class SubjectsService {
@@ -12,6 +13,7 @@ export class SubjectsService {
         private subjectRepo: Repository<Course>,
         @InjectRepository(Teacher)
         private teacherRepo: Repository<Teacher>,
+        @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
     ){}
 
     async create(createSubjectDto: CreateSubjectDto){
@@ -20,7 +22,12 @@ export class SubjectsService {
     }
 
     async findAll(){
-        return this.subjectRepo.find();
+        const cacheKey = 'all-subjects';
+        const cache = await this.redisClient.get(cacheKey);
+        if(cache) return JSON.parse(cache);
+        const subjects = await this.subjectRepo.find();
+        await this.redisClient.set(cacheKey, JSON.stringify(subjects), 'EX', 100)
+        return subjects;
     }
 
     async findOne(id: number){
