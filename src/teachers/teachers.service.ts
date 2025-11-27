@@ -37,6 +37,7 @@ export class TeachersService {
     async create(createTeacherDto: CreateTeacherDto){
         const teacher = await this.teacherRepo.create(createTeacherDto);
         await this.redisClient.del('all-teachers');
+        await this.redisClient.del('teacher-summary');
         return this.teacherRepo.save(teacher);
     }
 
@@ -44,7 +45,8 @@ export class TeachersService {
         const teacher = await this.teacherRepo.findOne({where: {id}})
         if(!teacher) throw new NotFoundException(`Teacher with ID ${id} not found`);
         await this.teacherRepo.update(id, updateTeacherDto)
-        await this.redisClient.del('all-teachers')
+        await this.redisClient.del('all-teachers');
+        await this.redisClient.del('teacher-summary');
         return {message: 'Teacher updated successfully'}
     }
 
@@ -53,6 +55,7 @@ export class TeachersService {
         if(!teacher) throw new NotFoundException(`Teacher with ID ${id} not found`);
         await this.teacherRepo.delete(id);
         await this.redisClient.del('all-teachers');
+        await this.redisClient.del('teacher-summary');
         return { message: 'Teacher deleted successfully' };
     }
 
@@ -102,16 +105,21 @@ export class TeachersService {
     }
 
     async getTeacherSummary(){
+        const cacheKey = 'teachers-summary';
+        const cache = await this.redisClient.get(cacheKey);
+        if(cache) return JSON.parse(cache);
         const teacher = await this.teacherRepo.find({
             relations: ['classes', 'subjects']
         });
 
-        return teacher.map(t => ({
+        const result = teacher.map(t => ({
             id: t.id,
             name: t.name,
             email: t.email,
             totalClasses: t.classes?.length || 0,
             totalSubjects: t.subjects?.length || 0
         }));
+        await this.redisClient.set(cacheKey, JSON.stringify(result), 'EX', 100);
+        return result;
     }
 }
