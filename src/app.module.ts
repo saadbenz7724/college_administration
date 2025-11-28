@@ -9,10 +9,13 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { RedisModule } from './redis/redis.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './logger/winston.config';
+import { CronModule } from './cron/cron.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     WinstonModule.forRoot(winstonConfig),
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRoot({
@@ -31,6 +34,7 @@ import { winstonConfig } from './logger/winston.config';
     SubjectsModule,
     AttendanceModule,
     RedisModule,
+    CronModule,
   ],
   
 })
