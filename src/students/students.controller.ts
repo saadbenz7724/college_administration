@@ -7,8 +7,11 @@ import { UpdateStudentDto } from './dto/updateStudentDto';
 export class StudentsController {
     constructor(private readonly studentService: StudentsService){}
     @Get()
-    getAll(){
-        return this.studentService.findAll()
+    getAll(
+        @Query('page') page: number = 1,
+        @Query('limit') limit: number = 10
+    ){
+        return this.studentService.findAll(Number(page), Number(limit));
     }
 
     @Get('group-by-class')

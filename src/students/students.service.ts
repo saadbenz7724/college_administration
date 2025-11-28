@@ -17,15 +17,27 @@ export class StudentsService {
         @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
     ){}
 
-    async findAll(){
-        const cacheKey = 'all-students'
+    async findAll(page: number = 1, limit = 10){
+        const cacheKey = `students:page:${page}:limit:${limit}`
         const cache = await this.redisClient.get(cacheKey);
         if(cache){
             return JSON.parse(cache);
         }
-        const student = await this.studentRepo.find()
-        await this.redisClient.set(cacheKey, JSON.stringify(student), 'EX', 100);
-        return student;
+        const [students, total] = await this.studentRepo.findAndCount({
+            skip: (page - 1) * limit,
+            take: limit,
+            order: {id: 'ASC'},
+        });
+
+        const result = {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total/limit),
+            data: students
+        };
+        await this.redisClient.set(cacheKey, JSON.stringify(result), 'EX', 100);
+        return result;
     }
 
     async findOne(id: number){
