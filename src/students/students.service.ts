@@ -126,14 +126,15 @@ export class StudentsService {
     }
 
     async searchStudents(query: string){
-        const data = await this.studentRepo.find({
-            where: [
-                {name: Like(`%${query}%`)},
-                {email: Like(`%${query}%`)},
-                {rollNumber: Number(query)}
-            ],
+        const condition: any[] = [
+            {name: Like(`%${query}%`)},
+            {email: Like(`%${query}%`)},
+        ];
+        
+        if(!isNaN(Number(query))) condition.push({rollNumber: Number(query)});
+        return this.studentRepo.find({
+            where: condition
         });
-        return data;
     }
 
     async getStudentSubjects(id: number){
