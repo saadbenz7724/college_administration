@@ -6,6 +6,7 @@ import { CreateStudentDto } from './dto/createStudentDto';
 import { UpdateStudentDto } from './dto/updateStudentDto';
 import { Class } from 'src/classes/class.entity';
 import Redis from 'ioredis';
+import { KafkaService } from 'src/kafka/kafka.service';
 
 @Injectable()
 export class StudentsService {
@@ -15,6 +16,7 @@ export class StudentsService {
         @InjectRepository(Class)
         private classRepo: Repository<Class>,
         @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
+        private readonly kafkaService: KafkaService,
     ){}
 
     async findAll(page: number = 1, limit = 10){
@@ -49,7 +51,12 @@ export class StudentsService {
     async create(createStudentDto: CreateStudentDto){
         const student = await this.studentRepo.create(createStudentDto)
         await this.redisClient.del('students:page:*');
-        return this.studentRepo.save(student);
+        const savedStudent = await this.studentRepo.save(student)
+        await this.kafkaService.sendMessage(
+            'student-created',
+            {studentId: savedStudent.id, name: savedStudent.name}
+        );
+        return savedStudent;
     }
 
     async update(id: number, updateStudentDto: UpdateStudentDto){
