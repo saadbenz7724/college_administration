@@ -171,7 +171,7 @@ export class StudentsService {
     }
 
     async studentGroupByClass(){
-        const cacheKey = 'student-group-classes';
+        const cacheKey = 'students:group:classes';
         const cache = await this.redisClient.get(cacheKey);
         if(cache){
             return JSON.parse(cache)
