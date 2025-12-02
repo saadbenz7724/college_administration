@@ -15,7 +15,9 @@ export class CronService{
         try{
             this.logger.log('Clear Cache');
 
-            const keys = await this.redisClient.keys('students:*');
+            const studentsKey = await this.redisClient.keys('students:*');
+            const teachersKey = await this.redisClient.keys('teacher:*')
+            const keys = [...studentsKey, ...teachersKey]
             if(keys.length){
                 await this.redisClient.del(...keys);
                 this.logger.log(`Cleared ${keys.length} student cache key`);
