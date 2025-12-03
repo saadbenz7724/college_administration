@@ -198,4 +198,19 @@ export class StudentsService {
                 'teachers.name'
                ]).getMany();
     }
+
+    async getStudentsWithClassAttendance(studentId: number){
+        return this.studentRepo.createQueryBuilder('students').leftJoinAndSelect('students.classEntity', 'classes')
+               .leftJoinAndSelect('students.attendance', 'attendance')
+               .select([
+                'students.id',
+                'students.name',
+                'students.email',
+                'classes.id',
+                'classes.className',
+                'attendance.id',
+                'attendance.present'
+               ]).where('students.id = :studentId', {studentId})
+               .getOne();
+    }
 }
