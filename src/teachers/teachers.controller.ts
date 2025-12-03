@@ -27,6 +27,14 @@ export class TeachersController {
         return this.teacherService.getClassesOfTeacher(teacherId)
     }
 
+    @Post(':teacherId/classes/bulk-assign')
+    bulkAssignClasses(
+        @Param('teacherId') teacherId: number,
+        @Body('classId') classId: number[]
+    ){
+        return this.teacherService.bulkAssignClasses(teacherId, classId)
+    }
+
     @Post(':teacherId/classes/:classId')
     assginClassToTeacher(
         @Param('teacherId') teacherId: number,

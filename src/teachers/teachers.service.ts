@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Teacher } from './teacher.entity';
 import { CreateTeacherDto } from './dto/createTeacherDto';
 import { UpdateTeacherDto } from './dto/updateTeacherDto';
@@ -135,5 +135,18 @@ export class TeachersService {
             totalPages: Math.ceil(total/limit),
             data
         };
+    }
+
+    async bulkAssignClasses(teacherId: number, classId: number[]){
+        const teacher = await this.teacherRepo.findOne({
+            where: {id: teacherId},
+            relations: ['classes']
+        });
+
+        if(!teacher) throw new NotFoundException(`Teacher with ID ${teacherId} not found`);
+        const cls = await this.classRepo.findBy({id: In(classId)});
+        if(!cls.length) throw new NotFoundException('No classes found for provided ids');
+        teacher.classes = [...teacher.classes, ...cls];
+        return await this.teacherRepo.save(teacher);
     }
 }
