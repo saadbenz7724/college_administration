@@ -200,7 +200,7 @@ export class StudentsService {
     }
 
     async getStudentsWithClassAttendance(studentId: number){
-        return this.studentRepo.createQueryBuilder('students').leftJoinAndSelect('students.classEntity', 'classes')
+        const result =  await this.studentRepo.createQueryBuilder('students').leftJoinAndSelect('students.classEntity', 'classes')
                .leftJoinAndSelect('students.attendance', 'attendance')
                .select([
                 'students.id',
@@ -212,5 +212,8 @@ export class StudentsService {
                 'attendance.present'
                ]).where('students.id = :studentId', {studentId})
                .getOne();
+
+        if(!result) throw new NotFoundException(`Student with ID ${studentId} not found`);
+        return result;       
     }
 }
