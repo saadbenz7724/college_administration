@@ -184,4 +184,18 @@ export class StudentsService {
 
         return student;                                      
     }
+
+    async getStudentsWithClassAndTeachers(){
+        return this.studentRepo.createQueryBuilder('students').leftJoinAndSelect('students.classEntity', 'classes')
+               .leftJoinAndSelect('classes.teachers', 'teachers')
+               .select([
+                'students.id',
+                'students.name',
+                'students.email',
+                'classes.id',
+                'classes.className',
+                'teachers.id',
+                'teachers.name'
+               ]).getMany();
+    }
 }

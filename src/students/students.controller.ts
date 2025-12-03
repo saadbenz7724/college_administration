@@ -46,6 +46,11 @@ export class StudentsController {
         return this.studentService.getStudentsWithClass(pageNumber, pageLimit);
     }
 
+    @Get('with-class-teacher')
+    getStudentsSummary(){
+        return this.studentService.getStudentsWithClassAndTeachers()
+    }
+
     @Get(':id')
     getOne(@Param('id')id: number){
         return this.studentService.findOne(id)
