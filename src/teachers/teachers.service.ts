@@ -149,4 +149,23 @@ export class TeachersService {
         teacher.classes = [...teacher.classes, ...cls];
         return await this.teacherRepo.save(teacher);
     }
+
+    async getTeacherSummaryWithStudents(teacherId: number){
+        const teacher = await this.teacherRepo.findOne({
+            where: {id: teacherId},
+            relations: ['classes', 'classes.students']
+        });
+        if(!teacher) throw new NotFoundException(`Teacher with ID ${teacherId} not found`);
+        const result = {
+            teacherId: teacher.id,
+            teacherName: teacher.name,
+            totalClasses: teacher.classes.length,
+            classes: teacher.classes.map(cls=>({
+                classId: cls.id,
+                className: cls.className,
+                studentCount: cls.students?cls.students.length:0,
+            })),
+        };
+        return result;
+    }
 }

@@ -17,6 +17,11 @@ export class TeachersController {
         return this.teacherService.getTeacherSummary();
     }
 
+    @Get(':teacherId/summary-with-student')
+    teacherSummary(@Param('teacherId')teacherId: number){
+        return this.teacherService.getTeacherSummaryWithStudents(teacherId)
+    }
+
     @Get(':id/details')
     getTeacherDetails(@Param('id')id: number){
         return this.teacherService.getTeacherDetails(id)
