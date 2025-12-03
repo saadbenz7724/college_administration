@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/createTeacherDto';
 import { UpdateTeacherDto } from './dto/updateTeacherDto';
@@ -33,6 +33,14 @@ export class TeachersController {
         @Param('classId') classId: number,
     ){
         return this.teacherService.assignClassToTeacher(teacherId, classId);
+    }
+
+    @Get('paginate')
+    getPaginatedTeachers(
+        @Query('page') page: number = 1,
+        @Query('limit') limit: number = 10,
+    ){
+        return this.teacherService.getPaginatedTeachers(page, limit);
     }
 
     @Get(':id')

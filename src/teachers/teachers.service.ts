@@ -122,4 +122,18 @@ export class TeachersService {
         await this.redisClient.set(cacheKey, JSON.stringify(result), 'EX', 100);
         return result;
     }
+    
+    async getPaginatedTeachers(page: number, limit: number){
+        const skip = (page - 1) * limit;
+        const [data, total] = await this.teacherRepo.findAndCount({
+            take: limit,
+            skip,
+        });
+        return{
+            total,
+            currentPage: page,
+            totalPages: Math.ceil(total/limit),
+            data
+        };
+    }
 }
