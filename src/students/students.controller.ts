@@ -1,11 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/createStudentDto';
 import { UpdateStudentDto } from './dto/updateStudentDto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { UserRole } from 'src/users/user.entity';
 
 @Controller('students')
 export class StudentsController {
     constructor(private readonly studentService: StudentsService){}
+    @UseGuards(JwtAuthGuard)
     @Get()
     getAll(
         @Query('page') page: number = 1,
@@ -79,6 +84,8 @@ export class StudentsController {
         return this.studentService.update(id, updateStudentDto)
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Delete(':id')
     remove(@Param('id')id: number){
         return this.studentService.remove(id)
