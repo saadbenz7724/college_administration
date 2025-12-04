@@ -11,6 +11,7 @@ import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './logger/winston.config';
 import { CronModule } from './cron/cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -35,6 +36,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AttendanceModule,
     RedisModule,
     CronModule,
+    AuthModule,
   ],
   
 })
